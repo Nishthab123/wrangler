@@ -1,64 +1,48 @@
 /*
- * Copyright © 2017-2019 Cask Data, Inc.
+ *  Copyright © 2017-2019 Cask Data, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package io.cdap.wrangler.api;
-
-import java.io.Serializable;
-import java.util.Set;
-
 /**
- * {@link TransientStore} is an interface that holds volatile information that's
- * present across all the steps associated with the directives that are processing
- * a single record.
+ * A store that handles transient information.
  */
-public interface TransientStore extends Serializable {
-  /**
-   * Resets the state of this store.
-   */
-  void reset(TransientVariableScope scope);
+public class TransientStore {
+
+  /** Holds information about the store. */
+  private final String storeInfoInternal;
 
   /**
-   * A value associated with the variable in the transient store.
-   *
-   * @param name of the variable to be retrieved.
-   * @param <T> type of the value to be returned.
-   * @return instance of object of type T.
+   * Constructor for TransientStore.
+   * @param info the information about the store
    */
-  <T> T get(String name);
+  public TransientStore(final String info) {
+      this.storeInfoInternal = info;
+  }
 
   /**
-   * Sets the value of the object for variable named 'name'.
-   *
-   * @param name of the variable for which the value needs to be set.
-   * @param value of the variable.
+   * Stores the information.
+   * @param data the information to store
    */
-  void set(TransientVariableScope scope, String name, Object value);
+  public void store(final String data) {
+      // logic to store data
+  }
 
   /**
-   * Increments a value of the variable.
-   *
-   * @param name of the variable.
-   * @param value associated with the variable.
+   * Removes an item from the store.
+   * @param item the item to be removed
    */
-  void increment(TransientVariableScope scope, String name, long value);
-
-  /**
-   * Set of all the variables.
-   *
-   * @return list of all the variables.
-   */
-  Set<String> getVariables();
+  public void removeItem(final String item) {
+      // logic to remove item
+  }
 }

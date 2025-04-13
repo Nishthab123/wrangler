@@ -14,47 +14,48 @@
  *  the License.
  */
 
-package io.cdap.wrangler.api;
+ package io.cdap.wrangler.api;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-/**
- * Class description here.
- */
-public final class SourceInfo {
-  private final int lineno;
-  private final int colno;
-  private final String source;
-
-  public SourceInfo(int lineno, int colno, String source) {
-    this.lineno = lineno;
-    this.colno = colno;
-    this.source = source;
-  }
-
-  public int getLineNumber() {
-    return lineno;
-  }
-
-  public int getColumnNumber() {
-    return colno;
-  }
-
-  public String getSource() {
-    return source;
-  }
-
-  @Override
-  public String toString() {
-    return String.format("%3d:%-3d - '%s'", lineno, colno, source);
-  }
-
-  public JsonElement toJson() {
-    JsonObject object = new JsonObject();
-    object.addProperty("line", lineno);
-    object.addProperty("column", colno);
-    object.addProperty("source", source);
-    return object;
-  }
-}
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ 
+ /**
+  * Represents the source information.
+  */
+ public final class SourceInfo {
+   private final int lineno;
+   private final int colno;
+   private final String source;
+ 
+   public SourceInfo(int lineno, int colno, String source) {
+     this.lineno = lineno;
+     this.colno = colno;
+     this.source = source;
+   }
+ 
+   public int getLineNumber() {
+     return lineno;
+   }
+ 
+   public int getColumnNumber() {
+     return colno;
+   }
+ 
+   public String getSource() {
+     return source;
+   }
+ 
+   @Override
+   public String toString() {
+     return String.format("%3d:%-3d - '%s'", lineno, colno, source);
+   }
+ 
+   public JsonElement toJson() {
+     JsonObject object = new JsonObject();
+     object.addProperty("line", lineno);
+     object.addProperty("column", colno);
+     object.addProperty("source", source);
+     return object;
+   }
+ }
+ 

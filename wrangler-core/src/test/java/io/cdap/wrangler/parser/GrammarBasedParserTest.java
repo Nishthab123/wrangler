@@ -24,6 +24,9 @@ import io.cdap.wrangler.api.RecipeParser;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,5 +77,27 @@ public class GrammarBasedParserTest {
     List<Directive> directives = parser.parse();
     Assert.assertEquals(0, directives.size());
   }
+
+  @Test
+public void testAggregateStatsDirective() {
+    // Sample recipe: aggregate-stats :data_size :duration :total_mb :total_sec
+    String[] recipe = new String[] {
+        "aggregate-stats :data_size :duration :total_mb :total_sec"
+    };
+
+    // Sample input rows
+    List<Row> input = new ArrayList<>();
+    input.add(new Row("data_size", "10MB").add("duration", "1.5s"));
+    input.add(new Row("data_size", "500KB").add("duration", "2s"));
+
+    // Execute the recipe
+    List<Row> results = TestingRig.execute(recipe, input);
+
+    // Validate results
+    assertEquals(1, results.size());
+    assertEquals(10.5, results.get(0).getValue("total_mb"), 0.001);
+    assertEquals(3.5, results.get(0).getValue("total_sec"), 0.001);
+}
+
 
 }

@@ -22,8 +22,10 @@ import io.cdap.wrangler.api.Compiler;
 import io.cdap.wrangler.api.DirectiveContext;
 import io.cdap.wrangler.api.DirectiveParseException;
 import io.cdap.wrangler.api.TokenGroup;
+import io.cdap.wrangler.api.parser.ByteSize;
 import io.cdap.wrangler.api.parser.DirectiveName;
 import io.cdap.wrangler.api.parser.SyntaxError;
+import io.cdap.wrangler.api.parser.TimeDuration;
 
 import java.util.Iterator;
 
@@ -58,8 +60,48 @@ public class GrammarWalker {
    * @throws DirectiveParseException if a directive in the recipe is invalid
    * @throws E if the visitor throws an exception
    */
-  public <E extends Exception> void walk(String recipe,
-                                         Visitor<E> visitor) throws CompileException, DirectiveParseException, E {
+//   public <E extends Exception> void walk(String recipe,
+//                                          Visitor<E> visitor) throws CompileException, DirectiveParseException, E {
+//     CompileStatus status = compiler.compile(recipe);
+//     if (!status.isSuccess()) {
+//       Iterator<SyntaxError> errors = status.getErrors();
+//       String prefix = "Encountered syntax error, please ensure the directive is valid:\n";
+//       throw new DirectiveParseException(prefix + errors.next().getMessage(), errors);
+//     }
+
+//     Iterator<TokenGroup> tokenGroups = status.getSymbols().iterator();
+//     while (tokenGroups.hasNext()) {
+//       TokenGroup tokenGroup = tokenGroups.next();
+//       if (tokenGroup == null) {
+//         continue;
+//       }
+//       String command = ((DirectiveName) tokenGroup.get(0)).value();
+//       String root = command;
+//       if (context.hasAlias(root)) {
+//         root = context.getAlias(command);
+//       }
+
+//       // Checks if the directive has been excluded from being used.
+//       if (!root.equals(command) && context.isExcluded(command)) {
+//         throw new DirectiveParseException(
+//           command, String.format("Aliased directive '%s' has been configured as restricted directive and "
+//                                    + "is hence unavailable. Please contact your administrator", command)
+//         );
+//       }
+
+//       if (context.isExcluded(root)) {
+//         throw new DirectiveParseException(
+//           command, String.format("Directive '%s' has been configured as restricted directive and is hence " +
+//                                    "unavailable. Please contact your administrator", command));
+//       }
+
+//       visitor.visit(root, tokenGroup);;
+//     }
+//   }
+// }
+
+public <E extends Exception> void walk(String recipe,
+                                       Visitor<E> visitor) throws CompileException, DirectiveParseException, E {
     CompileStatus status = compiler.compile(recipe);
     if (!status.isSuccess()) {
       Iterator<SyntaxError> errors = status.getErrors();
@@ -73,27 +115,53 @@ public class GrammarWalker {
       if (tokenGroup == null) {
         continue;
       }
-      String command = ((DirectiveName) tokenGroup.get(0)).value();
+      String command = ((DirectiveName) tokenGroup.get(0)).value(); // Get the command name
       String root = command;
       if (context.hasAlias(root)) {
-        root = context.getAlias(command);
+        root = context.getAlias(command); // Check if there’s an alias
       }
 
-      // Checks if the directive has been excluded from being used.
-      if (!root.equals(command) && context.isExcluded(command)) {
-        throw new DirectiveParseException(
-          command, String.format("Aliased directive '%s' has been configured as restricted directive and "
-                                   + "is hence unavailable. Please contact your administrator", command)
-        );
-      }
-
+      // Check if the command is excluded
       if (context.isExcluded(root)) {
         throw new DirectiveParseException(
-          command, String.format("Directive '%s' has been configured as restricted directive and is hence " +
-                                   "unavailable. Please contact your administrator", command));
+          command, String.format("Directive '%s' is excluded and is unavailable. Please contact your administrator", command));
       }
 
-      visitor.visit(root, tokenGroup);;
+      // Check if the command involves ByteSize or TimeDuration
+      if (command.equals("byteSizeArg")) {
+        // Parse the ByteSize argument from the tokenGroup
+        String byteSizeString = tokenGroup.get(1).toString(); // Get the argument value from tokenGroup
+        ByteSize byteSize = new ByteSize(byteSizeString); // Convert the string to a ByteSize object
+        // Now pass this ByteSize to the visitor
+        visitor.visit(command, tokenGroup); // You may pass the ByteSize object to the visitor if needed
+      } else if (command.equals("timeDurationArg")) {
+        // Parse the TimeDuration argument from the tokenGroup
+        String timeDurationString = tokenGroup.get(1).toString(); // Get the argument value from tokenGroup
+        TimeDuration timeDuration = new TimeDuration(timeDurationString); // Convert the string to a TimeDuration object
+        // Now pass this TimeDuration to the visitor
+        visitor.visit(command, tokenGroup); // You may pass the TimeDuration object to the visitor if needed
+      } else {
+        // Process other commands normally
+        visitor.visit(root, tokenGroup);
+      }
     }
+}
+
+public class MyVisitor implements GrammarWalker.Visitor<Exception> {
+
+  @Override
+  public void visit(String command, TokenGroup tokenGroup) throws Exception {
+      if (command.equals("byteSizeArg")) {
+          String byteSizeString = tokenGroup.get(1).toString(); // Get the argument value
+          ByteSize byteSize = new ByteSize(byteSizeString); // Create a ByteSize object
+          // Process the ByteSize logic here (e.g., logging, further parsing, etc.)
+      } else if (command.equals("timeDurationArg")) {
+          String timeDurationString = tokenGroup.get(1).toString(); // Get the argument value
+          TimeDuration timeDuration = new TimeDuration(timeDurationString); // Create a TimeDuration object
+          // Process the TimeDuration logic here (e.g., logging, further parsing, etc.)
+      } else {
+          // Handle other commands
+      }
   }
+}
 }

@@ -162,7 +162,14 @@ These directives are currently available:
 | [Date Manipulations](wrangler-docs/functions/date-functions.md)                 | Functions that can manipulate date                               |
 | [DDL](wrangler-docs/functions/ddl-functions.md)                                 | Functions that can manipulate definition of data                 |
 | [JSON](wrangler-docs/functions/json-functions.md)                               | Functions that can be useful in transforming your data           |
-| [Types](wrangler-docs/functions/type-functions.md)                              | Functions for detecting the type of data                         |
+| [Types](wrangler-docs/functions/type-functions.md)                              | Functions for detecting the type of data           
+
+ ## New Directives: aggregate-stats
+
+Usage:
+```sh
+aggregate-stats :data_size :response_time :total_mb :total_sec
+             |
 
 ## Performance
 

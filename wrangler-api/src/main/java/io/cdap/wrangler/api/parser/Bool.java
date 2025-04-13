@@ -1,19 +1,18 @@
 /*
- * Copyright © 2017-2019 Cask Data, Inc.
+ *  Copyright © 2017-2019 Cask Data, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package io.cdap.wrangler.api.parser;
 
 import com.google.gson.JsonElement;
@@ -21,11 +20,11 @@ import com.google.gson.JsonObject;
 import io.cdap.wrangler.api.annotations.PublicEvolving;
 
 /**
- * The Bool class wraps the primitive type {@code Boolean} in a object.
+ * The Bool class wraps the primitive type {@code Boolean} in an object.
  * An object of type {@code Bool} contains the value in primitive type
  * as well as the type of the token this class represents.
  *
- * <p>In addition, this class provides two methods one to extract the
+ * <p>In addition, this class provides two methods: one to extract the
  * value held by this wrapper object, and the second for extracting the
  * type of the token.</p>
  *
@@ -44,53 +43,77 @@ import io.cdap.wrangler.api.annotations.PublicEvolving;
  */
 @PublicEvolving
 public class Bool implements Token {
-  /**
-   * The {@code Boolean} object that represents the value held by the token.
-   */
-  private Boolean value;
 
-  /**
-   * Allocates a {@code Boolean} object representing the
-   * {@code value} argument.
-   *
-   * @param value the value of the {@code Boolean}.
-   */
-  public Bool(Boolean value) {
-    this.value = value;
-  }
+    /**
+     * The {@code Boolean} object that represents the value held by the token.
+     */
+    private final Boolean value;
 
-  /**
-   * Returns the value of this {@code Boolean} object as a boolean
-   * primitive.
-   *
-   * @return  the primitive {@code boolean} value of this object.
-   */
-  @Override
-  public Boolean value() {
-    return value;
-  }
+    /**
+     * Allocates a {@code Boolean} object representing the
+     * {@code value} argument.
+     *
+     * @param value the value of the {@code Boolean}.
+     */
+    public Bool(final Boolean value) {
+        if (value == null) {
+            throw new NullPointerException("Value cannot be null");
+        }
+        this.value = value;
+    }
 
-  /**
-   * Returns the type of this {@code Bool} object as a {@code TokenType}
-   * enum.
-   *
-   * @return the enumerated {@code TokenType} of this object.
-   */
-  @Override
-  public TokenType type() {
-    return TokenType.BOOLEAN;
-  }
+    /**
+     * Returns the value of this {@code Boolean} object as a boolean
+     * primitive.
+     *
+     * @return the primitive {@code boolean} value of this object.
+     */
+    @Override
+    public Boolean value() {
+        return value;
+    }
 
-  /**
-   * Returns the members of this {@code Bool} object as a {@code JsonElement}.
-   *
-   * @return Json representation of this {@code Bool} object as {@code JsonElement}
-   */
-  @Override
-  public JsonElement toJson() {
-    JsonObject object = new JsonObject();
-    object.addProperty("type", TokenType.BOOLEAN.name());
-    object.addProperty("value", value);
-    return object;
-  }
+    /**
+     * Returns the type of this {@code Bool} object as a {@code TokenType}
+     * enum.
+     *
+     * @return the enumerated {@code TokenType} of this object.
+     */
+    @Override
+    public TokenType type() {
+        return TokenType.BOOLEAN;
+    }
+
+    /**
+     * Returns the members of this {@code Bool} object as a {@code JsonElement}.
+     *
+     * @return Json representation of this {@code Bool} object as {@code JsonElement}
+     */
+    @Override
+    public final JsonElement toJson() {
+        JsonObject object = new JsonObject();
+        object.addProperty("type", TokenType.BOOLEAN.name());
+        object.addProperty("value", value);
+        return object;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bool bool = (Bool) o;
+        return value.equals(bool.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Bool{" +
+                "value=" + value +
+                '}';
+    }
 }
